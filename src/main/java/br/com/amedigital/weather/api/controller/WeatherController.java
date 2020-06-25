@@ -20,13 +20,13 @@ public class WeatherController {
 
     @GetMapping("/")
     public Flux<WeatherResponse> findWeatherToCity(@RequestParam String cityName) {
-        return weatherService.findWeatherToCity(Integer.parseInt(cityName))
+        return weatherService.findWeatherToCity(cityName)
                 .doOnTerminate(() -> LOG.info("=== Finish finding weather to city ==="));
     }
 
     @GetMapping("/days/7")
     public Flux<WeatherResponse> findWeatherToCityFor7Days(@RequestParam String cityName) {
-        return weatherService.findWeatherToCityFor7Days(Integer.parseInt(cityName))
+        return weatherService.findWeatherToCityFor7Days(cityName)
                 .doOnTerminate(() -> LOG.info("=== Finish finding weather to city ==="));
     }
 }

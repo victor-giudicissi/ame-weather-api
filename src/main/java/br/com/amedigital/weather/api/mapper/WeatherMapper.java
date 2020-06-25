@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @Component
 public class WeatherMapper {
 
-    public WeatherResponse entitytoResponse(WeatherEntity weatherEntity) {
+    public WeatherResponse entityToResponse(WeatherEntity weatherEntity) {
 
         WeatherResponse weather = new WeatherResponse();
         weather.setWeather(weatherEntity.getWeather());

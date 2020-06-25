@@ -40,7 +40,7 @@ public class INPEClientService extends BaseWebClient {
     }
 
     @Trace(dispatcher = true)
-    public Mono<INPEWeatherCityResponse> findWeatherToCityFor7Days(Integer cityCode) {
+    public Mono<INPEWeatherCityResponse> findWeatherToCityFor7Days(int cityCode) {
         LOG.debug("==== Find weather to city ====");
 
         return handleGenericMono(HttpMethod.GET, urlWeatherFor7Days(cityCode), INPEWeatherCityResponse.class, MediaType.APPLICATION_XML_VALUE)
