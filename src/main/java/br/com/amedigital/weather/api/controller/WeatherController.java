@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 @RestController
-@RequestMapping(value = "/weather")
+@RequestMapping
 public class WeatherController {
 
     private static final Logger LOG = LoggerFactory.getLogger(WeatherController.class);
@@ -25,6 +25,12 @@ public class WeatherController {
     @GetMapping("/{cityCode}")
     public Flux<WeatherResponse> findWeatherToCity(@PathVariable String cityCode) {
         return weatherService.findWeatherToCity(Integer.parseInt(cityCode))
+                .doOnTerminate(() -> LOG.info("=== Finish finding weather to city ==="));
+    }
+
+    @GetMapping("/{cityCode}/days/7")
+    public Flux<WeatherResponse> findWeatherToCityFor7Days(@PathVariable String cityCode) {
+        return weatherService.findWeatherToCityFor7Days(Integer.parseInt(cityCode))
                 .doOnTerminate(() -> LOG.info("=== Finish finding weather to city ==="));
     }
 }

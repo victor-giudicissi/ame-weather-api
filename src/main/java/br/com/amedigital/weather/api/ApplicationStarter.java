@@ -7,9 +7,8 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 
 import java.util.Locale;
 
-@SpringBootApplication
 @EnableWebFlux
-@EnableAutoConfiguration
+@SpringBootApplication
 public class ApplicationStarter {
 
     public static void main(String[] args) {

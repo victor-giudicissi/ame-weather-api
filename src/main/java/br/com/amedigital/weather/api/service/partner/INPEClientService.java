@@ -22,7 +22,8 @@ public class INPEClientService extends BaseWebClient {
 
     public static final String CITY_WEATHER = "cidade/#/previsao.xml";
 
-    @Autowired
+    public static final String CITY_WEATHER_7_DAYS = "cidade/7dias/#/previsao.xml";
+
     public INPEClientService(final WebClient webClient, @Value("${partner.url}") final String url) {
         super(webClient, url);
     }
@@ -35,9 +36,23 @@ public class INPEClientService extends BaseWebClient {
                         .doOnError(throwable -> LOG.error("=== Error finding weather to city ===", throwable));
     }
 
+    @Trace(dispatcher = true)
+    public Mono<INPEWeatherCityResponse> findWeatherToCityFor7Days(Integer cityCode) {
+        LOG.debug("==== Find weather to city ====");
+
+        return handleGenericMono(HttpMethod.GET, urlWeatherFor7Days(cityCode), INPEWeatherCityResponse.class, MediaType.APPLICATION_XML_VALUE)
+                .doOnError(throwable -> LOG.error("=== Error finding weather to city ===", throwable));
+    }
+
     protected UriComponents urlWeather(Integer cityCode) {
         return urlBuilder()
                 .pathSegment(CITY_WEATHER.replaceAll("#", String.valueOf(cityCode)))
+                .build();
+    }
+
+    protected UriComponents urlWeatherFor7Days(Integer cityCode) {
+        return urlBuilder()
+                .pathSegment(CITY_WEATHER_7_DAYS.replaceAll("#", String.valueOf(cityCode)))
                 .build();
     }
 

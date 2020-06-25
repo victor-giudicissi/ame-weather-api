@@ -43,8 +43,8 @@ Projeto para integração com parceiro para pagamento de débitos de veículos n
 ## Endpoint mapeado
 
 -> Exibe previsão do tempo para os próximos 4 dias para uma cidade específica
-- GET - http://localhost:9090/weather/weather/{codCidade}
-- Exemplo = http://localhost:9090/weather/weather/255
+- GET - http://localhost:9090/weather/{codCidade}
+- Exemplo = http://localhost:9090/weather/255
 - Sem restrições de autorização
 
 ## Api pública
