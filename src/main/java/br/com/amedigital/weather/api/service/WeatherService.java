@@ -47,7 +47,6 @@ public class WeatherService {
                 );
     }
 
-
     public Flux<WeatherResponse> findWeatherToCityFor7Days(String cityName) {
         return this.cityService.findCity(cityName)
                 .switchIfEmpty(Mono.error(new NotFoundException(ErrorMessages.GENERIC_NOT_FOUND_EXCEPTION)))

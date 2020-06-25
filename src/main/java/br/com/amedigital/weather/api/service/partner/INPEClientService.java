@@ -2,6 +2,7 @@ package br.com.amedigital.weather.api.service.partner;
 
 import br.com.amedigital.weather.api.config.webclient.BaseWebClient;
 import br.com.amedigital.weather.api.model.partner.response.INPECityResponse;
+import br.com.amedigital.weather.api.model.partner.response.INPEWaveResponse;
 import br.com.amedigital.weather.api.model.partner.response.INPEWeatherCityResponse;
 import com.newrelic.api.agent.Trace;
 import org.slf4j.Logger;
@@ -26,6 +27,8 @@ public class INPEClientService extends BaseWebClient {
     public static final String CITY_WEATHER_7_DAYS = "cidade/7dias/#/previsao.xml";
 
     public static final String CITY = "listaCidades";
+
+    public static final String WAVE = "cidade/%d/dia/%d/ondas.xml";
 
     public INPEClientService(final WebClient webClient, @Value("${partner.url}") final String url) {
         super(webClient, url);
@@ -55,6 +58,14 @@ public class INPEClientService extends BaseWebClient {
                 .doOnError(throwable -> LOG.error("=== Error finding weather to city ===", throwable));
     }
 
+    @Trace(dispatcher = true)
+    public Mono<INPEWaveResponse> findWave(int cityCode, int day) {
+        LOG.debug("==== Find weather to city ====");
+
+        return handleGenericMono(HttpMethod.GET, urlFindWave(cityCode, day), INPEWaveResponse.class, MediaType.APPLICATION_XML_VALUE)
+                .doOnError(throwable -> LOG.error("=== Error finding weather to city ===", throwable));
+    }
+
     protected UriComponents urlWeather(Integer cityCode) {
         return urlBuilder()
                 .pathSegment(CITY_WEATHER.replaceAll("#", String.valueOf(cityCode)))
@@ -67,7 +78,6 @@ public class INPEClientService extends BaseWebClient {
                 .build();
     }
 
-
     protected UriComponents urlFindCity(String cityName) {
         return urlBuilder()
                 .pathSegment(CITY)
@@ -75,4 +85,9 @@ public class INPEClientService extends BaseWebClient {
                 .build();
     }
 
+    protected UriComponents urlFindWave(int cityCode, int day) {
+        return urlBuilder()
+                .pathSegment(String.format(WAVE, cityCode, day))
+                .build();
+    }
 }

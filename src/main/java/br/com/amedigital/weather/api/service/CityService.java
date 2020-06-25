@@ -1,13 +1,11 @@
 package br.com.amedigital.weather.api.service;
 
-import br.com.amedigital.weather.api.entity.CityEntity;
 import br.com.amedigital.weather.api.exception.NotFoundException;
 import br.com.amedigital.weather.api.mapper.CityMapper;
 import br.com.amedigital.weather.api.model.ErrorMessages;
 import br.com.amedigital.weather.api.model.partner.response.INPECityResponse;
 import br.com.amedigital.weather.api.service.partner.INPEClientService;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
