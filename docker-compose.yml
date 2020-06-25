@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_ame_weather
+      MYSQL_USER: ame_weather
+      MYSQL_PASSWORD: ame_weather
+    ports:
+      - "3306:3306"
