@@ -1,0 +1,2 @@
+INSERT INTO wave (id, cityName, state, period, updatedAt, waveDay, unrest, height, direction, wind, windDirection)
+values (:id, :cityName, :state, :period, :updatedAt, :waveDay, :unrest, :height, :direction, :wind, :windDirection);

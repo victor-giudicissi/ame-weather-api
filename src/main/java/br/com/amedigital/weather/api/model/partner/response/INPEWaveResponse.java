@@ -20,7 +20,7 @@ public class INPEWaveResponse {
         private float wind;
         private String windDirection;
 
-        @XmlElement(name = "day")
+        @XmlElement(name = "dia")
         public String getDay() {
             return day;
         }
