@@ -5,6 +5,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.reflect.BeanMapper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class WeatherRepository extends BaseRepository {
         super(jdbi, jdbcScheduler);
     }
 
-    public Flux<WeatherEntity> save(List<WeatherEntity> entities) {
+    public Flux<WeatherEntity> saveAll(List<WeatherEntity> entities) {
 
         List<WeatherEntity> weatherEntities = new ArrayList<>();
 
@@ -34,6 +35,17 @@ public class WeatherRepository extends BaseRepository {
 
             return weatherEntities;
         })).flatMapIterable(e -> e);
+    }
+
+    public Mono<WeatherEntity> save(WeatherEntity entity) {
+        return async(() -> jdbi.inTransaction(handle -> {
+            entity.setId(UUID.randomUUID().toString());
+            handle.createUpdate(sqlLocator.locate("sql.save-weather"))
+                    .bindBean(entity)
+                    .execute();
+
+            return entity;
+        }));
     }
 
     public Flux<WeatherEntity> findAll() {
