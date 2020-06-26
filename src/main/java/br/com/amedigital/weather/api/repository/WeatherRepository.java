@@ -2,6 +2,7 @@ package br.com.amedigital.weather.api.repository;
 
 import br.com.amedigital.weather.api.entity.WeatherEntity;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.mapper.reflect.BeanMapper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Scheduler;
@@ -32,6 +33,18 @@ public class WeatherRepository extends BaseRepository {
             });
 
             return weatherEntities;
+        })).flatMapIterable(e -> e);
+    }
+
+    public Flux<WeatherEntity> findAll() {
+        return async(() -> jdbi.inTransaction(handle -> {
+            List<WeatherEntity> result = handle
+                    .createQuery(sqlLocator.locate("sql.find-all-weather"))
+                    .registerRowMapper(BeanMapper.factory(WeatherEntity.class))
+                    .mapTo(WeatherEntity.class)
+                    .list();
+
+            return result;
         })).flatMapIterable(e -> e);
     }
 }
