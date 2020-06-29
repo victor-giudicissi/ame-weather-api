@@ -1,0 +1,1 @@
+select * from weather where cityCode=:cityCode and date=:day;

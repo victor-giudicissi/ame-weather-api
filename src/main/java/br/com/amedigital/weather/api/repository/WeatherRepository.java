@@ -1,6 +1,7 @@
 package br.com.amedigital.weather.api.repository;
 
 import br.com.amedigital.weather.api.entity.WeatherEntity;
+import net.bytebuddy.asm.Advice;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.reflect.BeanMapper;
 import org.springframework.stereotype.Repository;
@@ -8,6 +9,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -58,5 +60,27 @@ public class WeatherRepository extends BaseRepository {
 
             return result;
         })).flatMapIterable(e -> e);
+    }
+
+    public Flux<WeatherEntity> findByCityCodeAndDay(int cityCode, LocalDate day) {
+        return async(() -> jdbi.inTransaction(handle -> {
+            List<WeatherEntity> result = handle
+                    .createQuery(sqlLocator.locate("sql.find-by-city-code-and-day"))
+                    .bind("cityCode", cityCode)
+                    .bind("day", day)
+                    .registerRowMapper(BeanMapper.factory(WeatherEntity.class))
+                    .mapTo(WeatherEntity.class)
+                    .list();
+
+            return result;
+        })).flatMapIterable(e -> e);
+    }
+
+    public Mono<Void> delete(String weatherId) {
+        return async(() -> jdbi.inTransaction(handle -> handle.createUpdate(sqlLocator.locate("sql.delete-weather"))
+                .bind("id", weatherId)
+                .execute()
+        ))
+                .then();
     }
 }

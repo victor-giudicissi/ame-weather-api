@@ -5,9 +5,12 @@ import br.com.amedigital.weather.api.entity.WeatherEntity;
 import br.com.amedigital.weather.api.service.WeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDate;
 
 @RestController
 public class WeatherController {
@@ -41,6 +44,13 @@ public class WeatherController {
     @PostMapping
     public Mono<WeatherResponse> save(@RequestBody WeatherEntity weatherEntity) {
         return weatherService.saveWeather(weatherEntity)
+                .doOnTerminate(() -> LOG.info("=== Finish saving weather ==="));
+    }
+
+    @DeleteMapping
+    public Mono<Void> delete(@RequestParam String cityName,
+                             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day) {
+        return weatherService.deleteWeather(cityName, day)
                 .doOnTerminate(() -> LOG.info("=== Finish saving weather ==="));
     }
 }

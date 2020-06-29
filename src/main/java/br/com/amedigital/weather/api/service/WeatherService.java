@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+
 @Service
 public class WeatherService {
 
@@ -73,5 +75,16 @@ public class WeatherService {
         return this.weatherRepository.save(weatherEntity)
                 .switchIfEmpty(Mono.error(new NotFoundException(ErrorMessages.GENERIC_NOT_FOUND_EXCEPTION)))
                 .flatMap(weatherEntityResult -> Mono.just(mapper.entityToResponse(weatherEntityResult)));
+    }
+
+    public Mono<Void> deleteWeather(String cityName, LocalDate day) {
+        return this.cityService.findCity(cityName)
+                .switchIfEmpty(Mono.error(new NotFoundException(ErrorMessages.GENERIC_NOT_FOUND_EXCEPTION)))
+                .flatMap(inpeCityResponse -> weatherRepository
+                        .findByCityCodeAndDay(inpeCityResponse.getCities().get(0).getId(), day)
+                        .switchIfEmpty(Mono.error(new NotFoundException(ErrorMessages.GENERIC_NOT_FOUND_EXCEPTION)))
+                        .flatMap(o -> weatherRepository.delete(o.getId()))
+                        .then()
+                );
     }
 }
