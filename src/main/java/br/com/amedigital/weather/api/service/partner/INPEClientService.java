@@ -35,19 +35,11 @@ public class INPEClientService extends BaseWebClient {
     }
 
     @Trace(dispatcher = true)
-    public Mono<INPEWeatherCityResponse> findWeatherToCity(Integer cityCode) {
+    public Mono<INPEWeatherCityResponse> findWeatherToCity(Integer cityCode, int days) {
         LOG.debug("==== Find weather to city ====");
 
-        return handleGenericMono(HttpMethod.GET, urlWeather(cityCode), INPEWeatherCityResponse.class, MediaType.APPLICATION_XML_VALUE)
+        return handleGenericMono(HttpMethod.GET, urlWeather(cityCode, days), INPEWeatherCityResponse.class, MediaType.APPLICATION_XML_VALUE)
                         .doOnError(throwable -> LOG.error("=== Error finding weather to city ===", throwable));
-    }
-
-    @Trace(dispatcher = true)
-    public Mono<INPEWeatherCityResponse> findWeatherToCityFor7Days(int cityCode) {
-        LOG.debug("==== Find weather to city ====");
-
-        return handleGenericMono(HttpMethod.GET, urlWeatherFor7Days(cityCode), INPEWeatherCityResponse.class, MediaType.APPLICATION_XML_VALUE)
-                .doOnError(throwable -> LOG.error("=== Error finding weather to city ===", throwable));
     }
 
     @Trace(dispatcher = true)
@@ -66,15 +58,13 @@ public class INPEClientService extends BaseWebClient {
                 .doOnError(throwable -> LOG.error("=== Error finding weather to city ===", throwable));
     }
 
-    protected UriComponents urlWeather(Integer cityCode) {
-        return urlBuilder()
-                .pathSegment(CITY_WEATHER.replaceAll("#", String.valueOf(cityCode)))
-                .build();
-    }
+    protected UriComponents urlWeather(Integer cityCode, int days) {
+        String url;
 
-    protected UriComponents urlWeatherFor7Days(Integer cityCode) {
+        url = days == 4 ?  CITY_WEATHER : CITY_WEATHER_7_DAYS;
+
         return urlBuilder()
-                .pathSegment(CITY_WEATHER_7_DAYS.replaceAll("#", String.valueOf(cityCode)))
+                .pathSegment(url.replaceAll("#", String.valueOf(cityCode)))
                 .build();
     }
 

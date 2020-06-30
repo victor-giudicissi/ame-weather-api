@@ -65,9 +65,24 @@ public class WeatherRepository extends BaseRepository {
     public Flux<WeatherEntity> findByCityCodeAndDay(int cityCode, LocalDate day) {
         return async(() -> jdbi.inTransaction(handle -> {
             List<WeatherEntity> result = handle
-                    .createQuery(sqlLocator.locate("sql.find-by-city-code-and-day"))
+                    .createQuery(sqlLocator.locate("sql.find-weather-by-city-code-and-day"))
                     .bind("cityCode", cityCode)
                     .bind("day", day)
+                    .registerRowMapper(BeanMapper.factory(WeatherEntity.class))
+                    .mapTo(WeatherEntity.class)
+                    .list();
+
+            return result;
+        })).flatMapIterable(e -> e);
+    }
+
+    public Flux<WeatherEntity> findByCityCodeAndDateRange(int cityCode, LocalDate init, LocalDate end) {
+        return async(() -> jdbi.inTransaction(handle -> {
+            List<WeatherEntity> result = handle
+                    .createQuery(sqlLocator.locate("sql.find-weather-by-city-code-and-date-range"))
+                    .bind("cityCode", cityCode)
+                    .bind("init", init)
+                    .bind("end", end)
                     .registerRowMapper(BeanMapper.factory(WeatherEntity.class))
                     .mapTo(WeatherEntity.class)
                     .list();
@@ -82,5 +97,17 @@ public class WeatherRepository extends BaseRepository {
                 .execute()
         ))
                 .then();
+    }
+
+    public Mono<Void> deleteAll(List<WeatherEntity> entities) {
+        return async(() -> jdbi.inTransaction(handle -> {
+                entities.forEach(weatherEntity -> {
+                    handle.createUpdate(sqlLocator.locate("sql.delete-weather"))
+                            .bind("id", weatherEntity.getId())
+                            .execute();
+                });
+
+                return entities;
+        })).then();
     }
 }
