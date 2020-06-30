@@ -2,22 +2,147 @@ openapi: 3.0.0
 info:
   title: 'Ame Digital - Weather API'
   version: '1.0'
-  description: 'Projeto
+  description: 'Projeto'
   contact:
     name: 'Ame Digital - Weather API'
-    email: amedigital@exactaworks.com
+    email: 'amedigital@exactaworks.com'
     url: 'http://www.amedigital.com/'
   license:
-    name: AME
+    name: 'AME'
 tags:
-  - name: weather
-    description: Refere-se a busca
+  - name: 'weather'
+    description: 'Endpoint de clima'
 paths:
-  /weather:
+  '/weather/days/{days}':
     get:
-      operationId: findWeather
-      summary: 'Busca'
+      operationId: 'findWeather'
+      summary: 'Busca o clima do dia corrente mais 4 ou 7 dias'
       tags:
-        - weather
+        - 'weather'
+      parameters:
+        - name: days
+          in: path
+          description: Filtro de dias da busca
+          required: true
+          schema:
+            type: number
+            enum: [4, 7]
       responses:
-        '200'
+        '200':
+          description: Lista todos os climas para a cidade e range de dias indicado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/weatherResponse'
+  '/weather':
+    get:
+      operationId: 'findAllWeather'
+      summary: 'Busca todos os climas cadastrados na base'
+      tags:
+        - 'weather'
+      responses:
+        '200':
+          description: Lista todos os climas cadastrados na base
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/weatherResponse'
+    post:
+      operationId: 'createWeather'
+      summary: 'Busca todos os climas cadastrados na base'
+      tags:
+        - 'weather'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/weatherBody'
+      responses:
+        '200':
+          description: Lista todos os climas cadastrados na base
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/weatherPostResponse'
+components:
+  schemas:
+    weatherResponse:
+      type: array
+      items:
+        properties:
+          weatherCity:
+            type: string
+          weatherDate:
+            type: string
+          maximumTemperature:
+            type: number
+          minimumTemperature:
+            type: number
+          weather:
+            type: string
+      example:
+        - weatherCity: "São Paulo"
+          weatherDate: "2020-06-30"
+          maximumTemperature: 13
+          minimumTemperature: 19
+          weather: "Parcialmente Nublado"
+        - weatherCity: "São Paulo"
+          weatherDate: "2020-07-01"
+          maximumTemperature: 14
+          minimumTemperature: 20
+          weather: "Parcialmente Nublado"
+        - weatherCity: "São Paulo"
+          weatherDate: "2020-07-02"
+          maximumTemperature: 12
+          minimumTemperature: 19
+          weather: "Parcialmente Nublado"
+        - weatherCity: "São Paulo"
+          weatherDate: "2020-07-03"
+          maximumTemperature: 15
+          minimumTemperature: 21
+          weather: "Parcialmente Nublado"
+    weatherBody:
+      type: object
+      items:
+        properties:
+          cityName:
+            type: string
+          cityCode:
+            type: number
+          date:
+            type: string
+          maximumTemperature:
+            type: number
+          minimumTemperature:
+            type: number
+          weather:
+            type: string
+      example:
+        - cityName: "São Paulo"
+          cityCode: 241
+          date: "2020-06-30"
+          maximumTemperature: 13
+          minimumTemperature: 19
+          weather: "Parcialmente Nublado"
+    weatherPostResponse:
+      type: object
+      items:
+        properties:
+          weatherCity:
+            type: string
+            example: "São Paulo"
+          weatherDate:
+            type: string
+          maximumTemperature:
+            type: number
+          minimumTemperature:
+            type: number
+          weather:
+            type: string
+      example:
+        - weatherCity: "São Paulo"
+          weatherDate: "2020-06-30"
+          maximumTemperature: 13
+          minimumTemperature: 19
+          weather: "Parcialmente Nublado"
