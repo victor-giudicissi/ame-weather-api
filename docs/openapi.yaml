@@ -49,7 +49,7 @@ paths:
                 $ref: '#/components/schemas/weatherResponse'
     post:
       operationId: 'createWeather'
-      summary: 'Busca todos os climas cadastrados na base'
+      summary: 'Insere um novo clima para uma determinada cidade'
       tags:
         - 'weather'
       requestBody:
@@ -59,12 +59,81 @@ paths:
             schema:
               $ref: '#/components/schemas/weatherBody'
       responses:
-        '200':
-          description: Lista todos os climas cadastrados na base
+        '201':
+          description: Retorno do que foi inserido na base
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/weatherPostResponse'
+    delete:
+      operationId: 'deleteWeather'
+      summary: 'Deleta um novo clima para uma determinada cidade e data'
+      tags:
+        - 'weather'
+      parameters:
+        - name: cityName
+          in: query
+          description: Filtro de cidade
+          required: true
+          schema:
+            type: string
+        - name: day
+          in: query
+          description: Filtro de dia
+          required: true
+          schema:
+            type: string
+            example: '2020-07-01'
+      responses:
+        '204':
+          description: Retorno de sucesso para a deleção do clima
+  '/weather/wave':
+    get:
+      operationId: 'findWeatherWave'
+      summary: 'Retorna informações de ondas para cidades litorâneas'
+      tags:
+        - 'waves'
+      parameters:
+        - name: cityName
+          in: query
+          description: Filtro de cidade
+          required: true
+          schema:
+            type: string
+        - name: day
+          in: query
+          description: Filtro de cidade
+          required: true
+          schema:
+            type: number
+            enum: [0, 1, 2]
+      responses:
+        '200':
+          description: Informações de ondas para as cidades litoranêas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/weatherWavesResponse'
+  '/weather/city':
+    get:
+      operationId: 'findCity'
+      summary: 'Lista cidades com um determinado nome'
+      tags:
+        - 'city'
+      parameters:
+        - name: cityName
+          in: query
+          description: Filtro de cidade
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Informações de ondas para as cidades litoranêas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cityResponse'
 components:
   schemas:
     weatherResponse:
@@ -104,45 +173,140 @@ components:
           weather: "Parcialmente Nublado"
     weatherBody:
       type: object
-      items:
-        properties:
-          cityName:
-            type: string
-          cityCode:
-            type: number
-          date:
-            type: string
-          maximumTemperature:
-            type: number
-          minimumTemperature:
-            type: number
-          weather:
-            type: string
+      properties:
+        cityName:
+          type: string
+        cityCode:
+          type: number
+        date:
+          type: string
+        maximumTemperature:
+          type: number
+        minimumTemperature:
+          type: number
+        weather:
+          type: string
       example:
-        - cityName: "São Paulo"
-          cityCode: 241
-          date: "2020-06-30"
-          maximumTemperature: 13
-          minimumTemperature: 19
-          weather: "Parcialmente Nublado"
+        cityName: "São Paulo"
+        cityCode: 241
+        date: "2020-06-30"
+        maximumTemperature: 13
+        minimumTemperature: 19
+        weather: "Parcialmente Nublado"
     weatherPostResponse:
       type: object
-      items:
-        properties:
-          weatherCity:
-            type: string
-            example: "São Paulo"
-          weatherDate:
-            type: string
-          maximumTemperature:
-            type: number
-          minimumTemperature:
-            type: number
-          weather:
-            type: string
+      properties:
+        weatherCity:
+          type: string
+          example: "São Paulo"
+        weatherDate:
+          type: string
+        maximumTemperature:
+          type: number
+        minimumTemperature:
+          type: number
+        weather:
+          type: string
       example:
-        - weatherCity: "São Paulo"
-          weatherDate: "2020-06-30"
-          maximumTemperature: 13
-          minimumTemperature: 19
-          weather: "Parcialmente Nublado"
+        weatherCity: "São Paulo"
+        weatherDate: "2020-06-30"
+        maximumTemperature: 13
+        minimumTemperature: 19
+        weather: "Parcialmente Nublado"
+    weatherWavesResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        state:
+          type: string
+        update:
+          type: string
+        morning:
+          type: object
+          properties:
+            day:
+              type: string
+            unrest:
+              type: string
+            heigth:
+              type: number
+            direction:
+              type: string
+            wind:
+              type: number
+            windDirection:
+              type: string
+        afternoon:
+          type: object
+          properties:
+            day:
+              type: string
+            unrest:
+              type: string
+            heigth:
+              type: number
+            direction:
+              type: string
+            wind:
+              type: number
+            windDirection:
+              type: string
+        night:
+          type: object
+          properties:
+            day:
+              type: string
+            unrest:
+              type: string
+            heigth:
+              type: number
+            direction:
+              type: string
+            wind:
+              type: number
+            windDirection:
+              type: string
+      example:
+        name: 'Rio de Janeiro'
+        state: 'RJ'
+        update: '2020-06-30'
+        morning:
+          day: '2020-06-30'
+          unrest: Fraco
+          heigth: 1.4
+          direction: ESE
+          wind: 9.5
+          windDirection: NE
+        afternoon:
+          day: '2020-06-30'
+          unrest: Fraco
+          heigth: 1.3
+          direction: ESE
+          wind: 8.6
+          windDirection: NE
+        night:
+          day: '2020-06-30'
+          unrest: Fraco
+          heigth: 1.4
+          direction: SE
+          wind: 11.1
+          windDirection: NE
+    cityResponse:
+      type: object
+      properties:
+        cities:
+          type: array
+          items:
+            properties:
+              name:
+                type: string
+              uf:
+                type: string
+              id:
+                type: number
+      example:
+        cities:
+          - name: Rio de Janeiro
+            uf: RJ
+            id: 241

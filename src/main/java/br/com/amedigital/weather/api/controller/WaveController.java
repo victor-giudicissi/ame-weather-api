@@ -21,7 +21,7 @@ public class WaveController {
         this.waveService = waveService;
     }
 
-    @GetMapping("/waves")
+    @GetMapping
     public Mono<INPEWaveResponse> findWave(@RequestParam int cityName,
                                            @RequestParam int day) {
         return this.waveService.findWave(cityName, day)
